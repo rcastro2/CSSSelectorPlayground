@@ -11,6 +11,9 @@
         <div class="container center font" id="banner">
             <h1>CSS Selector Playground</h1>
         </div>
+        <div class="container font" id="options">
+            <input type="checkbox" id="highlight" onclick="toggleHighlights()">Assistive Highlighting <div id="highlightOptions"><span class="selector">Selector</span> <span class="attribute">Attribute</span> <span class="value">Value</span></div>
+        </div>
         <div class="container font" id="response">
             <div id="challenge" >CSS styling challenge appears here when you click <span class="button">Next</span></div>
             <input type="button" onclick="generateRule()" value="Next">

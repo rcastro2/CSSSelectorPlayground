@@ -79,12 +79,35 @@ function generateRule(){
     let random_element = elements[rnd(0,elements.length)];
     let random_attribute = attributes[rnd(0,attributes.length)];
     let random_value = random_attribute.value();
-    document.getElementById("challenge").innerHTML = `Change the ${random_attribute.text} of the ${random_element.text} to ${random_value}`;
 
+    document.getElementById("challenge").innerHTML = `Change the <span class="attribute">${random_attribute.text}</span> of the <span class="selector">${random_element.text}</span> to <span class="value">${random_value}</span>`;
+    
     let styleElement = document.getElementById("outcomeStyles") || document.createElement("style");
     styleElement.id = "outcomeStyles";
     styleElement.textContent = `#expectedOutcome ${random_element.selector}{${random_attribute.attr}:${random_value}}`;
     document.head.appendChild(styleElement);
+}
+const highlightCSS = `.selector{
+    background-color:yellow;
+}
+.attribute{
+    background-color:cyan;
+}
+.value{
+    background-color:magenta;
+}`
+function toggleHighlights(){
+    console.log(document.getElementById("highlight").checked)
+    if(document.getElementById("highlight").checked){
+        document.getElementById("highlightOptions").style.visibility = "visible";
+        let styleElement = document.getElementById("highlightStyles") || document.createElement("style");
+        styleElement.id = "highlightStyles";
+        styleElement.textContent = highlightCSS;
+        document.head.appendChild(styleElement);
+    }else{
+        document.getElementById("highlightOptions").style.visibility = "hidden";
+        document.getElementById("highlightStyles").innerHTML = "";
+    }
 }
 
 function applySafeCSS() {
