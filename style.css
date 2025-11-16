@@ -1,0 +1,53 @@
+html,body{
+    margin: 0 auto;
+}
+.container{
+    display:flex;
+}
+.center{
+    justify-content:center;
+    align-items:center;
+}
+
+#main>div{
+    flex:1;
+    border:solid 1px black;
+    margin:10px;
+    border-radius:5px;
+}
+.titles{
+    margin:0px;
+    background-color:black;
+    color:white;
+    padding:10px;
+}
+.outcomes{
+    padding:10px;
+    font-size:12pt;
+}
+#response{
+    background-color: grey;
+    padding:10px;
+    margin:0px;
+}
+#banner{
+    background-color:black;
+    color:white;
+}
+#challenge{
+    flex:1;
+    font-size:14pt;
+    background-color:lightgrey;
+    margin-right:2px;
+    padding:15px;
+}
+.font{
+    font-family:Arial;
+}
+.button{
+    background-color:rgb(230,230,230);
+    padding:2px;
+    border:1px solid gray;
+    border-radius:4px;
+
+}

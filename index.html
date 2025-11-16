@@ -1,0 +1,117 @@
+<html>
+    <head>
+        <title>CSS Selector Practice</title>
+        <link href="style.css" rel="stylesheet">
+        <style>
+
+        </style>
+        <script src="script.js"></script>
+        <script>
+            function applySafeCSS() {
+                const userCSS = document.getElementById("cssInput").value;
+
+                // Only allow specific safe properties:
+                const allowedProps = ["color", "background-color", 
+                                      "font-size", "font-style", "font-family","font-weight",
+                                      "text-align","text-shadow","text-decoration",
+                                      "border", "margin", "padding","box-shadow"];
+
+                // Split rules into lines
+                let filtered = userCSS.replace(/([^{}]+)\{([^}]+)\}/g, (match, selector, rules) => {
+                    const safeRules = rules.split(";").filter(rule => {
+                        const property = rule.split(":")[0].trim().toLowerCase();
+                        return allowedProps.includes(property);
+                    }).join("; ");
+
+                    return `#userOutcome ${selector}{${safeRules}}`;
+                });
+
+                let styleElement = document.getElementById("userStyles") || document.createElement("style");
+                styleElement.id = "userStyles";
+                styleElement.textContent = filtered;
+                document.head.appendChild(styleElement);
+            }
+        </script>
+    </head>
+    <body>
+        <div class="container center font" id="banner">
+            <h1>CSS Selector Playground</h1>
+        </div>
+        <div class="container font" id="response">
+            <div id="challenge" >CSS styling challenge appears here when you click <span class="button">Next</span></div>
+            <input type="button" onclick="generateRule()" value="Next">
+            <textarea id="cssInput" rows="3" style="flex:1; resize:none; font-size:16pt;padding:5px;"></textarea>
+            <input type="button" onclick="applySafeCSS()" value="Apply">
+        </div>
+        <div class="container" id="main">
+            <div>
+                <h3 class="titles font">Outcome HTML</h3>
+            
+                <div id="userOutcome" class="outcomes">
+    <pre><code>
+    &lt;h3&gt;Heading 3&lt;/h3&gt;
+    &lt;p&gt;
+        Paragraph 1
+    &lt;/p&gt;
+    &lt;p class="info"&gt;
+        Paragraph 2
+    &lt;/p&gt;
+    &lt;div&gt; Div 1 &lt;/div&gt;
+    &lt;div class="info"&gt; Div 2 &lt;span&gt;Span 1&lt;/span&gt;&lt;/div&gt;
+    &lt;span&gt;Span 2&lt;/span&gt;
+    &lt;ol&gt;
+        &lt;li&gt;Item 1&lt;/li&gt;
+        &lt;li&gt;Item 2&lt;/li&gt;
+        &lt;li&gt;Item 3&lt;/li&gt;
+    &lt;/ol&gt;
+    </code></pre>             
+                </div>
+            </div>
+            <div>
+                <h3 class="titles font">Expected Styled Outcome</h3>
+            
+                <div id="expectedOutcome" class="outcomes">
+                    <h3>Heading 3</h3>
+                    <p>
+                        Paragraph 1
+                    </p>
+                    <p class="info">
+                        Paragraph 2
+                    </p>
+                    <div> Div 1 </div>
+                    <div class="info"> Div 2 <span>Span 1</span></div>
+                    <hr>
+                    <span>Span 2</span>
+                    <ol>
+                        <li>Item 1</li>
+                        <li>Item 2</li>
+                        <li>Item 3</li>
+                    </ol>
+                </div>
+            </div>
+            <div>
+                <h3 class="titles font">User Styled Outcome</h3>
+            
+                <div id="userOutcome" class="outcomes">
+                    <h3>Heading 3</h3>
+                    <p>
+                        Paragraph 1
+                    </p>
+                    <p class="info">
+                        Paragraph 2
+                    </p>
+                    <div> Div 1 </div>
+                    <div class="info"> Div 2 <span>Span 1</span></div>
+                    <hr>
+                    <span>Span 2</span>      
+                    <ol>
+                        <li>Item 1</li>
+                        <li>Item 2</li>
+                        <li>Item 3</li>
+                    </ol>          
+                </div>
+            </div>
+
+        </div>
+    </body>
+</html>
