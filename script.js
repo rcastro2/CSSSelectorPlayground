@@ -67,26 +67,6 @@ const elements = [{text: "paragraph",selector:"p"},
                   {text: "items in the list",selector:"li"},
 
 ]
-function generateRule(){
-    if(document.getElementById("userStyles")){
-        document.getElementById("userStyles").innerHTML = "";
-    }
-    if(document.getElementById("outcomeStyles")){
-        document.getElementById("outcomeStyles").innerHTML = "";
-        
-    }
-    document.getElementById("cssInput").value = "";
-    let random_element = elements[rnd(0,elements.length)];
-    let random_attribute = attributes[rnd(0,attributes.length)];
-    let random_value = random_attribute.value();
-
-    document.getElementById("challenge").innerHTML = `Change the <span class="attribute">${random_attribute.text}</span> of the <span class="selector">${random_element.text}</span> to <span class="value">${random_value}</span>`;
-    
-    let styleElement = document.getElementById("outcomeStyles") || document.createElement("style");
-    styleElement.id = "outcomeStyles";
-    styleElement.textContent = `#expectedOutcome ${random_element.selector}{${random_attribute.attr}:${random_value}}`;
-    document.head.appendChild(styleElement);
-}
 const highlightCSS = `.selector{
     background-color:yellow;
 }
@@ -109,28 +89,140 @@ function toggleHighlights(){
         document.getElementById("highlightStyles").innerHTML = "";
     }
 }
+let currentChallenge = {
+    selector: null,
+    property: null,
+    value: null
+};
+function generateRule(){
+    if(document.getElementById("userStyles")){
+        document.getElementById("userStyles").innerHTML = "";
+    }
+    if(document.getElementById("outcomeStyles")){
+        document.getElementById("outcomeStyles").innerHTML = "";
+        
+    }
+    document.getElementById("cssInput").value = "";
+    let random_element = elements[rnd(0,elements.length)];
+    let random_attribute = attributes[rnd(0,attributes.length)];
+    let random_value = random_attribute.value();
+    currentChallenge.selector = random_element.selector;
+    currentChallenge.property = random_attribute.attr;
+    currentChallenge.value = random_value;
 
-function applySafeCSS() {
-    const userCSS = document.getElementById("cssInput").value;
 
-    // Only allow specific safe properties:
-    const allowedProps = ["color", "background-color", 
-                            "font-size", "font-style", "font-family","font-weight",
-                            "text-align","text-shadow","text-decoration",
-                            "border", "box-shadow"];
-
-    // Split rules into lines
-    let filtered = userCSS.replace(/([^{}]+)\{([^}]+)\}/g, (match, selector, rules) => {
-        const safeRules = rules.split(";").filter(rule => {
-            const property = rule.split(":")[0].trim().toLowerCase();
-            return allowedProps.includes(property);
-        }).join("; ");
-
-        return `#userOutcome ${selector}{${safeRules}}`;
-    });
-
-    let styleElement = document.getElementById("userStyles") || document.createElement("style");
-    styleElement.id = "userStyles";
-    styleElement.textContent = filtered;
+    document.getElementById("challenge").innerHTML = `Change the <span class="attribute">${random_attribute.text}</span> of the <span class="selector">${random_element.text}</span> to <span class="value">${random_value}</span>`;
+    
+    let styleElement = document.getElementById("outcomeStyles") || document.createElement("style");
+    styleElement.id = "outcomeStyles";
+    styleElement.textContent = `#expectedOutcome ${random_element.selector}{${random_attribute.attr}:${random_value}}`;
     document.head.appendChild(styleElement);
+}
+
+function showFeedback(msg, ok = false) {
+  let fb = document.getElementById("feedback");
+  if (!fb) {
+    fb = document.createElement("div");
+    fb.id = "feedback";
+    fb.style.marginTop = "8px";
+    document.getElementById("response").appendChild(fb);
+  }
+  fb.innerHTML = msg;
+  fb.style.color = ok ? "green" : "crimson";
+}
+
+// improved, whitespace-tolerant applySafeCSS
+function applySafeCSS() {
+  const userCSS = document.getElementById("cssInput").value || "";
+
+  const allowedProps = ["color", "background-color",
+    "font-size", "font-style", "font-family", "font-weight",
+    "text-align", "text-shadow", "text-decoration",
+    "border", "box-shadow"];
+
+  // tolerant rule matcher: match ANY characters up to a {, then everything up to the matching }
+  // This will capture rules whether or not there's a space between selector and {
+  const rulePattern = /([^{]+)\{([^}]*)\}/g;
+  let match;
+  let outputRules = [];
+
+  while ((match = rulePattern.exec(userCSS)) !== null) {
+    let rawSelector = match[1].trim();
+    let rawDecls = match[2].trim();
+
+    if (!rawSelector || !rawDecls) continue;
+
+    // split declarations by semicolon; tolerate extra spaces and missing trailing semicolon
+    const declParts = rawDecls.split(";").map(d => d.trim()).filter(Boolean);
+    const safeDecls = [];
+
+    for (const decl of declParts) {
+      // require a colon; ignore malformed declarations
+      const colonIndex = decl.indexOf(":");
+      if (colonIndex === -1) continue;
+
+      let prop = decl.slice(0, colonIndex).trim().toLowerCase();
+      let val = decl.slice(colonIndex + 1).trim();
+
+      // normalize whitespace inside the value (e.g. multiple spaces -> single)
+      val = val.replace(/\s+/g, " ");
+
+      if (!allowedProps.includes(prop)) {
+        // skip disallowed properties
+        continue;
+      }
+
+      // reconstruct canonical form: "prop: value;"
+      safeDecls.push(`${prop}: ${val};`);
+    }
+
+    if (safeDecls.length) {
+      // keep selector exactly as user wrote (trimmed) so selectors like ".info > span" are preserved
+      outputRules.push(`#userOutcome ${rawSelector} { ${safeDecls.join(" ")} }`);
+    }
+  }
+
+  if (outputRules.length === 0) {
+    const feedbackBox = document.getElementById("feedback");
+    feedbackBox.style.color = "red";
+    feedbackBox.innerHTML = "&#10060; No valid CSS rules found. Check your braces, colons and semicolons.";
+
+    // remove any previous userStyles so old styles don't linger
+    const prev = document.getElementById("userStyles");
+    if (prev) prev.textContent = "";
+    return;
+  }
+
+  const resultCSS = outputRules.join("\n");
+
+  // apply to page
+  let styleElement = document.getElementById("userStyles");
+  if (!styleElement) {
+    styleElement = document.createElement("style");
+    styleElement.id = "userStyles";
+    document.head.appendChild(styleElement);
+  }
+  styleElement.textContent = resultCSS;
+  checkUserAnswer();
+}
+
+
+function checkUserAnswer() {
+    const expectedEl = document.querySelector(`#expectedOutcome ${currentChallenge.selector}`);
+    const userEl     = document.querySelector(`#userOutcome ${currentChallenge.selector}`);
+
+    if (!expectedEl || !userEl) return;
+
+    const expectedStyle = window.getComputedStyle(expectedEl)[currentChallenge.property];
+    const userStyle     = window.getComputedStyle(userEl)[currentChallenge.property];
+
+    const feedbackBox = document.getElementById("feedback");
+
+    if (expectedStyle === userStyle) {
+        feedbackBox.style.color = "green";
+        feedbackBox.innerHTML = "&#9989; Correct! Your CSS matches the expected rule.";
+    } else {
+        feedbackBox.style.color = "red";
+        feedbackBox.innerHTML = `&#10060; Not quite. Expected "${expectedStyle}", but got "${userStyle}".`;
+    }
 }
