@@ -6,32 +6,6 @@
 
         </style>
         <script src="script.js"></script>
-        <script>
-            function applySafeCSS() {
-                const userCSS = document.getElementById("cssInput").value;
-
-                // Only allow specific safe properties:
-                const allowedProps = ["color", "background-color", 
-                                      "font-size", "font-style", "font-family","font-weight",
-                                      "text-align","text-shadow","text-decoration",
-                                      "border", "margin", "padding","box-shadow"];
-
-                // Split rules into lines
-                let filtered = userCSS.replace(/([^{}]+)\{([^}]+)\}/g, (match, selector, rules) => {
-                    const safeRules = rules.split(";").filter(rule => {
-                        const property = rule.split(":")[0].trim().toLowerCase();
-                        return allowedProps.includes(property);
-                    }).join("; ");
-
-                    return `#userOutcome ${selector}{${safeRules}}`;
-                });
-
-                let styleElement = document.getElementById("userStyles") || document.createElement("style");
-                styleElement.id = "userStyles";
-                styleElement.textContent = filtered;
-                document.head.appendChild(styleElement);
-            }
-        </script>
     </head>
     <body>
         <div class="container center font" id="banner">

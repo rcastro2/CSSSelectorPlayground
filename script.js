@@ -54,10 +54,10 @@ const attributes = [{attr:"color",
                          return `${colors[rnd(0,colors.length)]} ${rnd(1,3)}px ${rnd(1,3)}px`;
                       }},
                       {attr:"border",
-                       text: "border around  ",
+                       text: "border ",
                        value(){
                          line = ["dotted ","dashed","solid","double"]
-                         return `${colors[rnd(0,colors.length)]} ${rnd(1,3)}px ${rnd(1,3)}px`;
+                         return `${colors[rnd(0,colors.length)]} ${line[rnd(0,line.length)]} ${rnd(1,3)}px`;
                       }}
                     ]
 const elements = [{text: "paragraph",selector:"p"},
@@ -87,3 +87,27 @@ function generateRule(){
     document.head.appendChild(styleElement);
 }
 
+function applySafeCSS() {
+    const userCSS = document.getElementById("cssInput").value;
+
+    // Only allow specific safe properties:
+    const allowedProps = ["color", "background-color", 
+                            "font-size", "font-style", "font-family","font-weight",
+                            "text-align","text-shadow","text-decoration",
+                            "border", "box-shadow"];
+
+    // Split rules into lines
+    let filtered = userCSS.replace(/([^{}]+)\{([^}]+)\}/g, (match, selector, rules) => {
+        const safeRules = rules.split(";").filter(rule => {
+            const property = rule.split(":")[0].trim().toLowerCase();
+            return allowedProps.includes(property);
+        }).join("; ");
+
+        return `#userOutcome ${selector}{${safeRules}}`;
+    });
+
+    let styleElement = document.getElementById("userStyles") || document.createElement("style");
+    styleElement.id = "userStyles";
+    styleElement.textContent = filtered;
+    document.head.appendChild(styleElement);
+}
