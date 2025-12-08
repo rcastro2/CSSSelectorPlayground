@@ -64,4 +64,18 @@ html,body{
     border-radius:4px;
 }
 
+.options {
+    display:none
+}
+#configure{
+    padding:5px;
+    cursor:pointer;
+    font-weight: bold;
+}
+#configure:hover{
+    background-color:black;
+    color:white;
+    font-weight: bold;
+    
+}
 

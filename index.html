@@ -1,6 +1,7 @@
 <html>
     <head>
         <title>CSS Selector Practice</title>
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/5/w3.css">
         <link href="style.css" rel="stylesheet">
         <style>
 
@@ -8,11 +9,13 @@
         <script src="script.js"></script>
     </head>
     <body>
+        <div class="container">
+            <span id="configure" onclick="modal.style.display='block'" class="font">
+                Configure
+            </span>
+        </div>
         <div class="container center font" id="banner">
             <h1>CSS Selector Playground</h1>
-        </div>
-        <div class="container font" id="options">
-            <input type="checkbox" id="highlight" onclick="toggleHighlights()">Assistive Highlighting <div id="highlightOptions"><span class="selector">Selector</span> <span class="attribute">Attribute</span> <span class="value">Value</span></div>
         </div>
         <div class="container font" id="response">
             <div id="challenge" >CSS styling challenge appears here when you click <span class="button">Next</span></div>
@@ -91,6 +94,43 @@
 
             </div>
 
+        </div>
+        <div id="configureWindow" class="w3-modal">
+            <div class="w3-modal-content w3-card-4 w3-animate-zoom">
+                <header class="w3-container w3-blue"> 
+                    <span onclick="modal.style.display='none'" 
+                    class="w3-button w3-blue w3-xlarge w3-display-topright">&times;</span>
+                    <h2 style="font-weight:bold;">Configuration</h2>
+                </header>
+
+                <div class="w3-bar w3-border-bottom">
+                    <button class="tablink w3-bar-item w3-button" onclick="openOption(event, 'Selection')">Selection</button>
+                    <button class="tablink w3-bar-item w3-button" onclick="openOption(event, 'Mode')">Mode</button>
+                    <button class="tablink w3-bar-item w3-button" onclick="openOption(event, 'About')">About</button>
+                </div>
+
+                <div id="Selection" class="w3-container options">
+                    <h1>Selection</h1>
+                    <div class="container font" id="options">
+                        <input type="checkbox" id="highlight" onclick="toggleHighlights()" style="margin-right:10px;">Assistive Highlighting <div id="highlightOptions"><span class="selector">Selector</span> <span class="attribute">Attribute</span> <span class="value">Value</span></div>
+                    </div>
+                </div>
+
+                <div id="Mode" class="w3-container options">
+                    <h1>Mode</h1>
+                    <p>...</p>
+                </div>
+
+                <div id="About" class="w3-container options">
+                    <h1>About</h1>
+                    <p>...</p>
+                </div>
+
+                <div class="w3-container w3-light-grey w3-padding">
+                    <button class="w3-button w3-right w3-white w3-border" 
+                    onclick="modal.style.display='none'">Close</button>
+                </div>
+            </div>
         </div>
     </body>
 </html>

@@ -1,3 +1,22 @@
+let modal, table, shape;
+window.onload = function(){
+    document.getElementsByClassName("tablink")[0].click();
+    modal = document.getElementById("configureWindow");
+}
+
+function openOption(evt, optionName) {
+  let i, x, tablinks;
+  x = document.getElementsByClassName("options");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablink");
+  for (i = 0; i < x.length; i++) {
+    tablinks[i].classList.remove("w3-light-grey");
+  }
+  document.getElementById(optionName).style.display = "block";
+  evt.currentTarget.classList.add("w3-light-grey");
+}
 let rnd = (l,u) => Math.floor(Math.random() * (u-l) + l);
 const colors = ["red", "blue", "green", "yellow", "cyan","magenta", "pink", "orange"];
 const attributes = [{attr:"color",
@@ -60,11 +79,11 @@ const attributes = [{attr:"color",
                          return `${colors[rnd(0,colors.length)]} ${line[rnd(0,line.length)]} ${rnd(1,3)}px`;
                       }}
                     ]
-const elements = [{text: "paragraph",selector:"p"},
-                  {text: "heading with a size 3",selector:"h3"},
-                  {text: "div container",selector:"div"},
-                  {text: "span container",selector:"span"},
-                  {text: "items in the list",selector:"li"},
+const targets = [{type:"element",text: "paragraph",selector:"p"},
+                  {type:"element",text: "heading with a size 3",selector:"h3"},
+                  {type:"element",text: "div container",selector:"div"},
+                  {type:"element",text: "span container",selector:"span"},
+                  {type:"element",text: "items in the list",selector:"li"},
 
 ]
 const highlightCSS = `.selector{
@@ -103,32 +122,20 @@ function generateRule(){
         
     }
     document.getElementById("cssInput").value = "";
-    let random_element = elements[rnd(0,elements.length)];
+    let random_target = targets[rnd(0,targets.length)];
     let random_attribute = attributes[rnd(0,attributes.length)];
     let random_value = random_attribute.value();
-    currentChallenge.selector = random_element.selector;
+    currentChallenge.selector = random_target.selector;
     currentChallenge.property = random_attribute.attr;
     currentChallenge.value = random_value;
 
 
-    document.getElementById("challenge").innerHTML = `Change the <span class="attribute">${random_attribute.text}</span> of the <span class="selector">${random_element.text}</span> to <span class="value">${random_value}</span>`;
+    document.getElementById("challenge").innerHTML = `Change the <span class="attribute">${random_attribute.text}</span> of the <span class="selector">${random_target.text}</span> to <span class="value">${random_value}</span>`;
     
     let styleElement = document.getElementById("outcomeStyles") || document.createElement("style");
     styleElement.id = "outcomeStyles";
-    styleElement.textContent = `#expectedOutcome ${random_element.selector}{${random_attribute.attr}:${random_value}}`;
+    styleElement.textContent = `#expectedOutcome ${random_target.selector}{${random_attribute.attr}:${random_value}}`;
     document.head.appendChild(styleElement);
-}
-
-function showFeedback(msg, ok = false) {
-  let fb = document.getElementById("feedback");
-  if (!fb) {
-    fb = document.createElement("div");
-    fb.id = "feedback";
-    fb.style.marginTop = "8px";
-    document.getElementById("response").appendChild(fb);
-  }
-  fb.innerHTML = msg;
-  fb.style.color = ok ? "green" : "crimson";
 }
 
 // improved, whitespace-tolerant applySafeCSS
