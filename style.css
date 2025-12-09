@@ -25,7 +25,7 @@ html,body{
     padding:10px;
     font-size:12pt;
 }
-#options{
+.configureOptions{
     padding:10px;
     align-items: center;
 }
@@ -62,6 +62,7 @@ html,body{
     padding:2px;
     border:1px solid gray;
     border-radius:4px;
+    display: inline;
 }
 
 .options {
@@ -79,3 +80,13 @@ html,body{
     
 }
 
+/* The label above */
+#challenge span::before {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 14px !important;
+    font-weight: normal;
+    color: #444;
+}

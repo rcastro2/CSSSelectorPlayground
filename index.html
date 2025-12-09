@@ -18,7 +18,7 @@
             <h1>CSS Selector Playground</h1>
         </div>
         <div class="container font" id="response">
-            <div id="challenge" >CSS styling challenge appears here when you click <span class="button">Next</span></div>
+            <div id="challenge" >CSS styling challenge appears here when you click <a class="button">Next</a></div>
             <input type="button" onclick="generateRule()" value="Next">
             <textarea id="cssInput" rows="3" style="flex:1; resize:none; font-size:16pt;padding:5px;"></textarea>
             <input type="button" onclick="applySafeCSS()" value="Apply">
@@ -26,43 +26,32 @@
         <div class="container" id="main">
             <div>
                 <h3 class="titles font">Outcome HTML</h3>
-            
-                <div id="userOutcome" class="outcomes">
-    <pre><code>
-    &lt;h3&gt;Heading 3&lt;/h3&gt;
-    &lt;p&gt;
-        Paragraph 1
-    &lt;/p&gt;
-    &lt;p class="info"&gt;
-        Paragraph 2
-    &lt;/p&gt;
-    &lt;div&gt; Div 1 &lt;/div&gt;
-    &lt;div class="info"&gt; Div 2 &lt;span&gt;Span 1&lt;/span&gt;&lt;/div&gt;
-    &lt;span&gt;Span 2&lt;/span&gt;
-    &lt;ol&gt;
-        &lt;li&gt;Item 1&lt;/li&gt;
-        &lt;li&gt;Item 2&lt;/li&gt;
-        &lt;li&gt;Item 3&lt;/li&gt;
-    &lt;/ol&gt;
-    </code></pre>             
+                <div class="outcomes">
+                    <pre style="margin:0;position:relative; top:-15px;"><code style="display:block;">
+
+                    </code></pre>             
                 </div>
             </div>
             <div>
                 <h3 class="titles font">Expected Styled Outcome</h3>
             
                 <div id="expectedOutcome" class="outcomes">
-                    <h3>Heading 3</h3>
-                    <p>
+                    <h3 id="title" class="highlight">Heading 3</h3>
+                    <p id="main" class="highlight">
                         Paragraph 1
                     </p>
                     <p class="info">
                         Paragraph 2
                     </p>
-                    <div> Div 1 </div>
-                    <div class="info"> Div 2 <span>Span 1</span></div>
+                    <div class="focus"> Div 1 </div>
+                    <div class="info">
+                        Div 2
+                        <h3 class="highlight">Heading 3 in Div 2</h3>
+                        <span class="focus">Span 1 in Div 2</span>
+                    </div>
                     <hr>
                     <span>Span 2</span>
-                    <ol>
+                    <ol id="items">
                         <li>Item 1</li>
                         <li>Item 2</li>
                         <li>Item 3</li>
@@ -73,22 +62,26 @@
                 <h3 class="titles font">User Styled Outcome</h3>
             
                 <div id="userOutcome" class="outcomes">
-                    <h3>Heading 3</h3>
-                    <p>
+                    <h3 id="title" class="highlight">Heading 3</h3>
+                    <p id="main" class="highlight">
                         Paragraph 1
                     </p>
                     <p class="info">
                         Paragraph 2
                     </p>
-                    <div> Div 1 </div>
-                    <div class="info"> Div 2 <span>Span 1</span></div>
+                    <div class="focus"> Div 1 </div>
+                    <div class="info">
+                        Div 2
+                        <h3 class="highlight">Heading 3 in Div 2</h3>
+                        <span class="focus">Span 1 in Div 2</span>
+                    </div>
                     <hr>
-                    <span>Span 2</span>      
-                    <ol>
+                    <span>Span 2</span>
+                    <ol id="items">
                         <li>Item 1</li>
                         <li>Item 2</li>
                         <li>Item 3</li>
-                    </ol>          
+                    </ol>    
                 </div>
                 <div id="feedback" class="font" style="margin-top:10px; font-size:12pt;"></div>
 
@@ -110,14 +103,21 @@
                 </div>
 
                 <div id="Selection" class="w3-container options">
-                    <h1>Selection</h1>
-                    <div class="container font" id="options">
-                        <input type="checkbox" id="highlight" onclick="toggleHighlights()" style="margin-right:10px;">Assistive Highlighting <div id="highlightOptions"><span class="selector">Selector</span> <span class="attribute">Attribute</span> <span class="value">Value</span></div>
+                    <div class="font configureOptions">
+                        <h2>Assistive</h2>
+                        <div class="container" style="align-items: center;"><input type="checkbox" id="highlight" onclick="toggleHighlights()" style="margin-right:10px;">Highlighting <div id="highlightOptions"><span class="selector">Selector</span> <span class="attribute">Attribute</span> <span class="value">Value</span></div></div>
+                        <input type="checkbox" id="labels" onclick="toggleLabels()" style="margin-right:10px;">Labels
+                    </div>
+                    <div class="font configureOptions">
+                        <h3>Type of Selectors</h3>
+                        <input type="checkbox" value="element" checked name="selectorTypes" style="margin-right:10px;">Element Selectors<br>
+                        <input type="checkbox" value="class" name="selectorTypes" style="margin-right:10px;">Class Selectors <br>
+                        <input type="checkbox" value="id" name="selectorTypes" style="margin-right:10px;">Id Selectors <br>
                     </div>
                 </div>
 
                 <div id="Mode" class="w3-container options">
-                    <h1>Mode</h1>
+                    <h2>Mode</h2>
                     <p>...</p>
                 </div>
 

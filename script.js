@@ -1,7 +1,49 @@
-let modal, table, shape;
+let modal, table, shape, typeOfSelectors;
 window.onload = function(){
     document.getElementsByClassName("tablink")[0].click();
     modal = document.getElementById("configureWindow");
+
+    typeOfSelectors = document.querySelectorAll("input[name='selectorTypes']")
+    Array.from(typeOfSelectors).forEach(el => el.addEventListener("change",()=>adjustCoreHTML()));
+   adjustCoreHTML();
+}
+const coreHTML = `
+<h3 id="title" class="highlight">Heading 3</h3>
+<p id="main" class="highlight">
+    Paragraph 1
+</p>
+<p class="info">
+    Paragraph 2
+</p>
+<div class="focus"> Div 1 </div>
+<div class="info">
+    Div 2
+    <h3 class="highlight">Heading 3 in Div 2</h3>
+    <span class="focus">Span 1 in Div 2</span>
+</div>
+<hr>
+<span>Span 2</span>
+<ol id="items">
+    <li>Item 1</li>
+    <li>Item 2</li>
+    <li>Item 3</li>
+</ol>`;
+
+function removeAttributes(attr, html) {
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+    const elementsWithAttr = temp.querySelectorAll(`[${attr}]`);
+    elementsWithAttr.forEach(el => el.removeAttribute(attr));
+    return temp.innerHTML;
+}
+function adjustCoreHTML(){
+ let finalHTML = coreHTML;
+ for(let selector of typeOfSelectors){
+    if (!selector.checked){
+       finalHTML = removeAttributes(selector.value,finalHTML);
+    }
+  }
+  document.querySelector("code").textContent = finalHTML;
 }
 
 function openOption(evt, optionName) {
@@ -79,13 +121,26 @@ const attributes = [{attr:"color",
                          return `${colors[rnd(0,colors.length)]} ${line[rnd(0,line.length)]} ${rnd(1,3)}px`;
                       }}
                     ]
-const targets = [{type:"element",text: "paragraph",selector:"p"},
+const allTargets = [{type:"element",text: "paragraph",selector:"p"},
                   {type:"element",text: "heading with a size 3",selector:"h3"},
                   {type:"element",text: "div container",selector:"div"},
                   {type:"element",text: "span container",selector:"span"},
                   {type:"element",text: "items in the list",selector:"li"},
+                  {type:"class", 
+                   name:null,
+                   get text(){return `elements with a class of '${this.name}'`},
+                   get selector(){ return`.${this.name}`}
+                  },
+                  {type:"id", 
+                   name:null,
+                   get text(){return `element with an id of '${this.name}'`},
+                   get selector(){ return`#${this.name}`}
+                  }
 
 ]
+const elNames = {"class":["highlight","info","focus"],
+                 "id":["title","main","items"]};
+
 const highlightCSS = `.selector{
     background-color:yellow;
 }
@@ -95,8 +150,25 @@ const highlightCSS = `.selector{
 .value{
     background-color:magenta;
 }`
+const labelCSS = `
+#challenge span {
+    display: inline-block;
+    position: relative;
+    padding-top: 18px;
+    margin: 0 4px;
+}
+#challenge .attribute::before {
+    content: "attribute";
+}
+
+#challenge .selector::before {
+    content: "selector";
+}
+
+#challenge .value::before {
+    content: "value";
+}`
 function toggleHighlights(){
-    console.log(document.getElementById("highlight").checked)
     if(document.getElementById("highlight").checked){
         document.getElementById("highlightOptions").style.visibility = "visible";
         let styleElement = document.getElementById("highlightStyles") || document.createElement("style");
@@ -106,6 +178,16 @@ function toggleHighlights(){
     }else{
         document.getElementById("highlightOptions").style.visibility = "hidden";
         document.getElementById("highlightStyles").innerHTML = "";
+    }
+}
+function toggleLabels(){
+    if(document.getElementById("labels").checked){
+        let styleElement = document.getElementById("labelStyles") || document.createElement("style");
+        styleElement.id = "labelStyles";
+        styleElement.textContent = labelCSS;
+        document.head.appendChild(styleElement);
+    }else{
+        document.getElementById("labelStyles").innerHTML = "";
     }
 }
 let currentChallenge = {
@@ -119,10 +201,14 @@ function generateRule(){
     }
     if(document.getElementById("outcomeStyles")){
         document.getElementById("outcomeStyles").innerHTML = "";
-        
     }
     document.getElementById("cssInput").value = "";
+    let checkedTargets = document.querySelectorAll("input[name='selectorTypes']:checked")
+    let selectedTargets = Array.from(checkedTargets).map(target => target.value);
+    let targets = selectedTargets.length == 0? allTargets: allTargets.filter(el => selectedTargets.includes(el.type) );
+
     let random_target = targets[rnd(0,targets.length)];
+    if (random_target.type != "element") random_target.name = elNames[random_target.type][rnd(0,3)];
     let random_attribute = attributes[rnd(0,attributes.length)];
     let random_value = random_attribute.value();
     currentChallenge.selector = random_target.selector;
@@ -233,3 +319,5 @@ function checkUserAnswer() {
         feedbackBox.innerHTML = `&#10060; Not quite. Expected "${expectedStyle}", but got "${userStyle}".`;
     }
 }
+
+
